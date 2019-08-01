@@ -1,0 +1,14 @@
+server:
+  port: 18001
+spring:
+  application:
+    name: eureka-server
+eureka:
+  instance:
+    # hostname: node02
+    prefer-ip-address: true
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: http://172.17.0.4:18001/eureka,http://172.17.0.30:18001/eureka,http://172.17.0.103:18001/eureka
