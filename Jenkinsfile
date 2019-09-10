@@ -31,8 +31,9 @@ pipeline {
           steps {
             sh 'pwd'
             dir(path: '/var/lib/jenkins/workspace/spring-cloud_master/api-gateway-zuul/target/') {
-              sh 'pwd'
               withCredentials(bindings: [sshUserPrivateKey(credentialsId: 'ffa6fc58-0558-4b74-baeb-b21dd0a035a5', keyFileVariable: 'privateKey', usernameVariable: 'userName')]) {
+                sh 'ssh -i ${privateKey} ${userName}@${deployHost} "bash -s" < ${springBootScript} stop ${deployPath}/${moduleName}-${projectVersion}.jar'
+                sh 'ssh -i ${privateKey} ${userName}@${deployHost} mv ${deployPath}/${moduleName}-${projectVersion}.jar ${deployPath}/backup/${moduleName}-${projectVersion}.jar'
                 sh 'scp -i ${privateKey}  ${moduleName}-${projectVersion}.jar ${userName}@${deployHost}:${deployPath}'
               }
             }
@@ -150,5 +151,6 @@ pipeline {
     deployPath = '/root/data'
     deployHost = '47.244.175.138'
     projectVersion = '1.0.0'
+    springBootScript = '/var/lib/jenkins/script/spring-boot.sh'
   }
 }
