@@ -33,13 +33,19 @@ pipeline {
         sh 'pwd'
         dir(path: '/var/lib/jenkins/workspace/spring-cloud_master/api-gateway-zuul/target/') {
           sh 'pwd'
-          withCredentials([sshUserPrivateKey(credentialsId: 'ffa6fc58-0558-4b74-baeb-b21dd0a035a5', keyFileVariable: 'pem')]) {
-            sh 'scp -i ${pem}  api-gateway-zuul-0.0.1-SNAPSHOT.jar root@47.244.175.138:/root/data'
-            sh 'ssh -i ${pem} root@47.244.175.138 "BUILD_ID=dontKillMe nohup java -jar /root/data/api-gateway-zuul-0.0.1-SNAPSHOT.jar > /dev/null 2>&1 &"'
+          withCredentials(bindings: [sshUserPrivateKey(credentialsId: 'ffa6fc58-0558-4b74-baeb-b21dd0a035a5', keyFileVariable: 'pem')]) {
+            sh 'scp -i ${pem}  api-gateway-zuul-${projectVersion}.jar root@${deployHost}:${deployPath}'
+            sh 'ssh -i ${pem} root@${deployHost} "BUILD_ID=dontKillMe nohup java -jar ${deployPath}/api-gateway-zuul-${projectVersion}.jar > /dev/null 2>&1 &"'
           }
+
         }
 
       }
     }
+  }
+  environment {
+    deployPath = '/root/data'
+    deployHost = '47.244.175.138'
+    projectVersion = '0.0.1-SNAPSHOT'
   }
 }
