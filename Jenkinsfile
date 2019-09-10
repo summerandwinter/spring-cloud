@@ -35,7 +35,7 @@ pipeline {
           sh 'pwd'
           withCredentials([sshUserPrivateKey(credentialsId: 'ffa6fc58-0558-4b74-baeb-b21dd0a035a5', keyFileVariable: 'pem')]) {
             sh 'scp -i ${pem}  api-gateway-zuul-0.0.1-SNAPSHOT.jar root@47.244.175.138:/root/data'
-            sh 'ssh -i ${pem} root@47.244.175.138 "BUILD_ID=dontKillMe nohup java -jar api-gateway-zuul-0.0.1-SNAPSHOT.jar > /dev/null 2>&1 &"'
+            sh 'ssh -i ${pem} root@47.244.175.138 "BUILD_ID=dontKillMe nohup java -jar /root/data/api-gateway-zuul-0.0.1-SNAPSHOT.jar > /dev/null 2>&1 &"'
           }
         }
 
