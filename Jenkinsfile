@@ -36,7 +36,7 @@ pipeline {
           }
           steps {
             sh 'pwd'
-            dir(path: '/var/lib/jenkins/workspace/spring-cloud_master/${moduleName}/target/') {
+            dir(path: '/var/lib/jenkins/workspace/spring-cloud_master/api-gateway-zuul/target/') {
               sh 'pwd'
               withCredentials(bindings: [sshUserPrivateKey(credentialsId: 'ffa6fc58-0558-4b74-baeb-b21dd0a035a5', keyFileVariable: 'privateKey', usernameVariable: 'userName')]) {
                 sh 'scp -i ${privateKey}  ${moduleName}-${projectVersion}.jar ${userName}@${deployHost}:${deployPath}'
@@ -50,7 +50,7 @@ pipeline {
           }
           steps {
             sh 'pwd'
-            dir(path: '/var/lib/jenkins/workspace/spring-cloud_master/${moduleName}/target/') {
+            dir(path: '/var/lib/jenkins/workspace/spring-cloud_master/api-gateway/target/') {
               sh 'pwd'
               withCredentials(bindings: [sshUserPrivateKey(credentialsId: 'ffa6fc58-0558-4b74-baeb-b21dd0a035a5', keyFileVariable: 'privateKey', usernameVariable: 'userName')]) {
                 sh 'scp -i ${privateKey}  ${moduleName}-${projectVersion}.jar ${userName}@${deployHost}:${deployPath}'
@@ -64,7 +64,7 @@ pipeline {
           }
           steps {
             sh 'pwd'
-            dir(path: '/var/lib/jenkins/workspace/spring-cloud_master/${moduleName}/target/') {
+            dir(path: '/var/lib/jenkins/workspace/spring-cloud_master/config-server-git/target/') {
               sh 'pwd'
               withCredentials(bindings: [sshUserPrivateKey(credentialsId: 'ffa6fc58-0558-4b74-baeb-b21dd0a035a5', keyFileVariable: 'privateKey', usernameVariable: 'userName')]) {
                 sh 'scp -i ${privateKey}  ${moduleName}-${projectVersion}.jar ${userName}@${deployHost}:${deployPath}'
@@ -78,7 +78,7 @@ pipeline {
           }
           steps {
             sh 'pwd'
-            dir(path: '/var/lib/jenkins/workspace/spring-cloud_master/${moduleName}/target/') {
+            dir(path: '/var/lib/jenkins/workspace/spring-cloud_master/eureka-consumer/target/') {
               sh 'pwd'
               withCredentials(bindings: [sshUserPrivateKey(credentialsId: 'ffa6fc58-0558-4b74-baeb-b21dd0a035a5', keyFileVariable: 'privateKey', usernameVariable: 'userName')]) {
                 sh 'scp -i ${privateKey}  ${moduleName}-${projectVersion}.jar ${userName}@${deployHost}:${deployPath}'
@@ -92,7 +92,7 @@ pipeline {
           }
           steps {
             sh 'pwd'
-            dir(path: '/var/lib/jenkins/workspace/spring-cloud_master/${moduleName}/target/') {
+            dir(path: '/var/lib/jenkins/workspace/spring-cloud_master/eureka-producer/target/') {
               sh 'pwd'
               withCredentials(bindings: [sshUserPrivateKey(credentialsId: 'ffa6fc58-0558-4b74-baeb-b21dd0a035a5', keyFileVariable: 'privateKey', usernameVariable: 'userName')]) {
                 sh 'scp -i ${privateKey}  ${moduleName}-${projectVersion}.jar ${userName}@${deployHost}:${deployPath}'
@@ -106,7 +106,7 @@ pipeline {
           }
           steps {
             sh 'pwd'
-            dir(path: '/var/lib/jenkins/workspace/spring-cloud_master/${moduleName}/target/') {
+            dir(path: '/var/lib/jenkins/workspace/spring-cloud_master/eureka-server/target/') {
               sh 'pwd'
               withCredentials(bindings: [sshUserPrivateKey(credentialsId: 'ffa6fc58-0558-4b74-baeb-b21dd0a035a5', keyFileVariable: 'privateKey', usernameVariable: 'userName')]) {
                 sh 'scp -i ${privateKey}  ${moduleName}-${projectVersion}.jar ${userName}@${deployHost}:${deployPath}'
@@ -120,7 +120,7 @@ pipeline {
           }
           steps {
             sh 'pwd'
-            dir(path: '/var/lib/jenkins/workspace/spring-cloud_master/${moduleName}/target/') {
+            dir(path: '/var/lib/jenkins/workspace/spring-cloud_master/hystrix-dashboard/target/') {
               sh 'pwd'
               withCredentials(bindings: [sshUserPrivateKey(credentialsId: 'ffa6fc58-0558-4b74-baeb-b21dd0a035a5', keyFileVariable: 'privateKey', usernameVariable: 'userName')]) {
                 sh 'scp -i ${privateKey}  ${moduleName}-${projectVersion}.jar ${userName}@${deployHost}:${deployPath}'
@@ -134,7 +134,7 @@ pipeline {
           }
           steps {
             sh 'pwd'
-            dir(path: '/var/lib/jenkins/workspace/spring-cloud_master/${moduleName}/target/') {
+            dir(path: '/var/lib/jenkins/workspace/spring-cloud_master/turbine/target/') {
               sh 'pwd'
               withCredentials(bindings: [sshUserPrivateKey(credentialsId: 'ffa6fc58-0558-4b74-baeb-b21dd0a035a5', keyFileVariable: 'privateKey', usernameVariable: 'userName')]) {
                 sh 'scp -i ${privateKey}  ${moduleName}-${projectVersion}.jar ${userName}@${deployHost}:${deployPath}'
