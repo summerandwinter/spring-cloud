@@ -153,6 +153,6 @@ pipeline {
   environment {
     deployPath = '/root/data'
     deployHost = '47.244.175.138'
-    projectVersion = '0.0.1-SNAPSHOT'
+    projectVersion = '1.0.0'
   }
 }

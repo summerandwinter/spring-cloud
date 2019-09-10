@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>io.summer</groupId>
 	<artifactId>hystrix-dashboard</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>1.0.0</version>
 	<name>hystrix-dashboard</name>
 	<description>Demo project for Spring Boot</description>
 

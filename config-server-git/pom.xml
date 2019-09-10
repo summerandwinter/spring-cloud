@@ -11,7 +11,7 @@
   </parent>
   <groupId>io.summer</groupId>
   <artifactId>config-server-git</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
+  <version>1.0.0</version>
   <name>config-server-git</name>
   <description>Demo project for Spring Boot</description>
 
