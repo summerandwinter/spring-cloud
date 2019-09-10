@@ -4,7 +4,7 @@ pipeline {
     stage('Build') {
       steps {
         echo 'building...'
-        sh 'mvn -DskipTests=true package'
+        sh 'pwd'
       }
     }
   }
