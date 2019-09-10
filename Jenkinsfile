@@ -5,6 +5,8 @@ pipeline {
       steps {
         echo 'building...'
         sh 'pwd'
+        sh 'which mvn'
+        sh 'mvn -v'
       }
     }
   }
