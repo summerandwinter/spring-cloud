@@ -3,14 +3,10 @@ pipeline {
   stages {
     stage('Build') {
       parallel {
-        stage('Build') {
+        stage('pwd') {
           steps {
             echo 'building...'
             sh 'pwd'
-            sh 'which mvn'
-            sh 'mvn -v'
-            sh 'which java'
-            sh 'java -version'
           }
         }
         stage('java') {
