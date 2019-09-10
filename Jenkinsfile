@@ -33,7 +33,9 @@ pipeline {
         sh 'pwd'
         dir(path: '/var/lib/jenkins/workspace/spring-cloud_master/api-gateway-zuul/target/') {
           sh 'pwd'
-          sh 'scp api-gateway-zuul-0.0.1-SNAPSHOT.jar root@47.244.175.138:/root/data'
+          withCredentials([sshUserPrivateKey(credentialsId: 'ffa6fc58-0558-4b74-baeb-b21dd0a035a5', keyFileVariable: 'pem')]) {
+            sh 'scp -i ${pem}  api-gateway-zuul-0.0.1-SNAPSHOT.jar root@47.244.175.138:/root/data'
+          }
         }
 
       }
