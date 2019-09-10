@@ -1,7 +1,7 @@
 pipeline {
   agent any
   stages {
-    stage('Build') {
+    stage('Env') {
       parallel {
         stage('pwd') {
           steps {
