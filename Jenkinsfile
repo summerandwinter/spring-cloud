@@ -7,6 +7,8 @@ pipeline {
         sh 'pwd'
         sh 'which mvn'
         sh 'mvn -v'
+        sh 'which java'
+        sh 'java -v'
       }
     }
   }
