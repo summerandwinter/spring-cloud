@@ -23,5 +23,10 @@ pipeline {
         }
       }
     }
+    stage('Build') {
+      steps {
+        sh 'mvn -DskipTests=true package'
+      }
+    }
   }
 }
