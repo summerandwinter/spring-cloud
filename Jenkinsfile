@@ -16,6 +16,13 @@ pipeline {
         stage('java') {
           steps {
             sh 'which java'
+            sh 'java -version'
+          }
+        }
+        stage('maven') {
+          steps {
+            sh 'which mvn'
+            sh 'mvn -v'
           }
         }
       }
