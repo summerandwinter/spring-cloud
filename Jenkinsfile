@@ -33,6 +33,7 @@ pipeline {
         sh 'pwd'
         dir(path: '/var/lib/jenkins/workspace/spring-cloud_master/api-gateway-zuul/target/') {
           sh 'pwd'
+          sh 'scp api-gateway-zuul-0.0.1-SNAPSHOT.jar root@47.244.175.138:/root/data'
         }
 
       }
