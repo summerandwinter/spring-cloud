@@ -28,5 +28,14 @@ pipeline {
         sh 'mvn -DskipTests=true package'
       }
     }
+    stage('Deploy') {
+      steps {
+        sh 'pwd'
+        dir(path: '/var/lib/jenkins/workspace/spring-cloud_master/api-gateway-zuul/target/') {
+          sh 'pwd'
+        }
+
+      }
+    }
   }
 }
