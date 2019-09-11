@@ -6,11 +6,6 @@ pipeline {
         stage('java') {
           steps {
             sh 'printenv'
-            echo 'JOB_NAME: $JOB_NAME'
-            echo 'JOB_BASE_NAME: $JOB_BASE_NAME'
-            echo 'BRANCH_NAME: $BRANCH_NAME'
-            echo 'WORKSPACE: $WORKSPACE'
-            echo 'NODE_NAME: $NODE_NAME'
             sh 'which java'
             sh 'java -version'
           }
@@ -35,16 +30,12 @@ pipeline {
             moduleName = 'api-gateway-zuul'
           }
           steps {
-            sh 'pwd'
-            dir(path: '/var/lib/jenkins/workspace/spring-cloud_master/api-gateway-zuul/target/') {
-              withCredentials(bindings: [sshUserPrivateKey(credentialsId: 'ffa6fc58-0558-4b74-baeb-b21dd0a035a5', keyFileVariable: 'privateKey', usernameVariable: 'userName')]) {
-                sh 'ssh -i ${privateKey} ${userName}@${deployHost} "bash -s" < ${springBootScript} stop ${deployPath}/${moduleName}-${projectVersion}.jar'
-                sh 'ssh -i ${privateKey} ${userName}@${deployHost} mv ${deployPath}/${moduleName}-${projectVersion}.jar ${deployPath}/backup/${moduleName}-${projectVersion}.jar'
-                sh 'scp -i ${privateKey}  ${moduleName}-${projectVersion}.jar ${userName}@${deployHost}:${deployPath}'
-              }
-
+            withCredentials(bindings: [sshUserPrivateKey(credentialsId: 'ffa6fc58-0558-4b74-baeb-b21dd0a035a5', keyFileVariable: 'privateKey', usernameVariable: 'userName')]) {
+              sh 'printenv'
+              sh 'ssh -i ${privateKey} ${userName}@${deployHost} "bash -s" < ${springBootScript} stop ${deployPath}/${moduleName}-${projectVersion}.jar'
+              sh 'ssh -i ${privateKey} ${userName}@${deployHost} mv ${deployPath}/${moduleName}-${projectVersion}.jar ${deployPath}/backup/${moduleName}-${projectVersion}.jar'
+              sh 'scp -i ${privateKey}  ${WORKSPACE}/${moduleName}/target/${moduleName}-${projectVersion}.jar ${userName}@${deployHost}:${deployPath}'
             }
-
           }
         }
         stage('api-gateway') {
