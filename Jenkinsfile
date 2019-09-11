@@ -1,117 +1,28 @@
-pipeline {
-  agent any
-  stages {
-    stage('Env') {
-      parallel {
-        stage('java') {
-          steps {
-            sh 'printenv'
-            sh 'which java'
-            sh 'java -version'
-          }
+// While you can't use Groovy's .collect or similar methods currently, you can
+// still transform a list into a set of actual build steps to be executed in
+// parallel.
+
+// Our initial list of strings we want to echo in parallel
+def stringsToEcho = ["a", "b", "c", "d"]
+
+// The map we'll store the parallel steps in before executing them.
+def stepsForParallel = stringsToEcho.collectEntries {
+    ["echoing ${it}" : transformIntoStep(it)]
+}
+
+// Actually run the steps in parallel - parallel takes a map as an argument,
+// hence the above.
+parallel stepsForParallel
+
+// Take the string and echo it.
+def transformIntoStep(inputString) {
+    // We need to wrap what we return in a Groovy closure, or else it's invoked
+    // when this method is called, not when we pass it to parallel.
+    // To do this, you need to wrap the code below in { }, and either return
+    // that explicitly, or use { -> } syntax.
+    return {
+        node {
+            echo inputString
         }
-        stage('maven') {
-          steps {
-            sh 'which mvn'
-            sh 'mvn -v'
-          }
-        }
-      }
     }
-    stage('Build') {
-      steps {
-        sh 'mvn -DskipTests=true package'
-        archiveArtifacts artifacts: '**/target/*.jar', fingerprint: true
-      }
-    }
-    stage('Delivery') {
-      parallel {
-        stage('api-gateway-zuul') {
-          steps {
-            withCredentials(bindings: [sshUserPrivateKey(credentialsId: 'ffa6fc58-0558-4b74-baeb-b21dd0a035a5', keyFileVariable: 'privateKey', usernameVariable: 'userName')]) {
-              sh 'ssh -i ${privateKey} ${userName}@${deployHost} "bash -s" < ${springBootScript} stop ${deployPath}/${STAGE_NAME}-${projectVersion}.jar'
-              sh 'ssh -i ${privateKey} ${userName}@${deployHost} mv ${deployPath}/${STAGE_NAME}-${projectVersion}.jar ${deployPath}/backup/${STAGE_NAME}-${projectVersion}.jar'
-              sh 'scp -i ${privateKey}  ${WORKSPACE}/${STAGE_NAME}/target/${STAGE_NAME}-${projectVersion}.jar ${userName}@${deployHost}:${deployPath}'
-            }
-          }
-        }
-        stage('api-gateway') {
-          steps {
-            withCredentials(bindings: [sshUserPrivateKey(credentialsId: 'ffa6fc58-0558-4b74-baeb-b21dd0a035a5', keyFileVariable: 'privateKey', usernameVariable: 'userName')]) {
-              sh 'ssh -i ${privateKey} ${userName}@${deployHost} "bash -s" < ${springBootScript} stop ${deployPath}/${STAGE_NAME}-${projectVersion}.jar'
-              sh 'ssh -i ${privateKey} ${userName}@${deployHost} mv ${deployPath}/${STAGE_NAME}-${projectVersion}.jar ${deployPath}/backup/${STAGE_NAME}-${projectVersion}.jar'
-              sh 'scp -i ${privateKey}  ${WORKSPACE}/${STAGE_NAME}/target/${STAGE_NAME}-${projectVersion}.jar ${userName}@${deployHost}:${deployPath}'
-            }
-          }
-        }
-        stage('config-server-git') {
-          steps {
-            withCredentials(bindings: [sshUserPrivateKey(credentialsId: 'ffa6fc58-0558-4b74-baeb-b21dd0a035a5', keyFileVariable: 'privateKey', usernameVariable: 'userName')]) {
-              sh 'ssh -i ${privateKey} ${userName}@${deployHost} "bash -s" < ${springBootScript} stop ${deployPath}/${STAGE_NAME}-${projectVersion}.jar'
-              sh 'ssh -i ${privateKey} ${userName}@${deployHost} mv ${deployPath}/${STAGE_NAME}-${projectVersion}.jar ${deployPath}/backup/${STAGE_NAME}-${projectVersion}.jar'
-              sh 'scp -i ${privateKey}  ${WORKSPACE}/${STAGE_NAME}/target/${STAGE_NAME}-${projectVersion}.jar ${userName}@${deployHost}:${deployPath}'
-            }
-          }
-        }
-        stage('eureka-consumer') {
-          steps {
-            withCredentials(bindings: [sshUserPrivateKey(credentialsId: 'ffa6fc58-0558-4b74-baeb-b21dd0a035a5', keyFileVariable: 'privateKey', usernameVariable: 'userName')]) {
-              sh 'ssh -i ${privateKey} ${userName}@${deployHost} "bash -s" < ${springBootScript} stop ${deployPath}/${STAGE_NAME}-${projectVersion}.jar'
-              sh 'ssh -i ${privateKey} ${userName}@${deployHost} mv ${deployPath}/${STAGE_NAME}-${projectVersion}.jar ${deployPath}/backup/${STAGE_NAME}-${projectVersion}.jar'
-              sh 'scp -i ${privateKey}  ${WORKSPACE}/${STAGE_NAME}/target/${STAGE_NAME}-${projectVersion}.jar ${userName}@${deployHost}:${deployPath}'
-            }
-          }
-        }
-        stage('eureka-producer') {
-          steps {
-            withCredentials(bindings: [sshUserPrivateKey(credentialsId: 'ffa6fc58-0558-4b74-baeb-b21dd0a035a5', keyFileVariable: 'privateKey', usernameVariable: 'userName')]) {
-              sh 'ssh -i ${privateKey} ${userName}@${deployHost} "bash -s" < ${springBootScript} stop ${deployPath}/${STAGE_NAME}-${projectVersion}.jar'
-              sh 'ssh -i ${privateKey} ${userName}@${deployHost} mv ${deployPath}/${STAGE_NAME}-${projectVersion}.jar ${deployPath}/backup/${STAGE_NAME}-${projectVersion}.jar'
-              sh 'scp -i ${privateKey}  ${WORKSPACE}/${STAGE_NAME}/target/${STAGE_NAME}-${projectVersion}.jar ${userName}@${deployHost}:${deployPath}'
-            }
-          }
-        }
-        stage('eureka-server') {
-          steps {
-            withCredentials(bindings: [sshUserPrivateKey(credentialsId: 'ffa6fc58-0558-4b74-baeb-b21dd0a035a5', keyFileVariable: 'privateKey', usernameVariable: 'userName')]) {
-              sh 'ssh -i ${privateKey} ${userName}@${deployHost} "bash -s" < ${springBootScript} stop ${deployPath}/${STAGE_NAME}-${projectVersion}.jar'
-              sh 'ssh -i ${privateKey} ${userName}@${deployHost} mv ${deployPath}/${STAGE_NAME}-${projectVersion}.jar ${deployPath}/backup/${STAGE_NAME}-${projectVersion}.jar'
-              sh 'scp -i ${privateKey}  ${WORKSPACE}/${STAGE_NAME}/target/${STAGE_NAME}-${projectVersion}.jar ${userName}@${deployHost}:${deployPath}'
-            }
-          }
-        }
-        stage('hystrix-dashboard') {
-          steps {
-            withCredentials(bindings: [sshUserPrivateKey(credentialsId: 'ffa6fc58-0558-4b74-baeb-b21dd0a035a5', keyFileVariable: 'privateKey', usernameVariable: 'userName')]) {
-              sh 'ssh -i ${privateKey} ${userName}@${deployHost} "bash -s" < ${springBootScript} stop ${deployPath}/${STAGE_NAME}-${projectVersion}.jar'
-              sh 'ssh -i ${privateKey} ${userName}@${deployHost} mv ${deployPath}/${STAGE_NAME}-${projectVersion}.jar ${deployPath}/backup/${STAGE_NAME}-${projectVersion}.jar'
-              sh 'scp -i ${privateKey}  ${WORKSPACE}/${STAGE_NAME}/target/${STAGE_NAME}-${projectVersion}.jar ${userName}@${deployHost}:${deployPath}'
-            }
-          }
-        }
-        stage('turbine') {
-          steps {
-            withCredentials(bindings: [sshUserPrivateKey(credentialsId: 'ffa6fc58-0558-4b74-baeb-b21dd0a035a5', keyFileVariable: 'privateKey', usernameVariable: 'userName')]) {
-              sh 'ssh -i ${privateKey} ${userName}@${deployHost} "bash -s" < ${springBootScript} stop ${deployPath}/${STAGE_NAME}-${projectVersion}.jar'
-              sh 'ssh -i ${privateKey} ${userName}@${deployHost} mv ${deployPath}/${STAGE_NAME}-${projectVersion}.jar ${deployPath}/backup/${STAGE_NAME}-${projectVersion}.jar'
-              sh 'scp -i ${privateKey}  ${WORKSPACE}/${STAGE_NAME}/target/${STAGE_NAME}-${projectVersion}.jar ${userName}@${deployHost}:${deployPath}'
-            }
-          }
-        }
-      }
-    }
-    stage('Deploy') {
-      steps {
-        withCredentials(bindings: [sshUserPrivateKey(credentialsId: 'ffa6fc58-0558-4b74-baeb-b21dd0a035a5', keyFileVariable: 'privateKey', usernameVariable: 'userName')]) {
-          sh 'ssh -i ${privateKey} ${userName}@${deployHost} "bash -s" < ${JENKINS_HOME}/script/spring-boot.sh start ${deployPath}/eureka-server-1.0.0.jar'
-        }
-      }
-    }
-  }
-  environment {
-    deployPath = '/root/data'
-    deployHost = '47.244.175.138'
-    projectVersion = '1.0.0'
-    springBootScript = '/var/lib/jenkins/script/spring-boot.sh'
-  }
 }
