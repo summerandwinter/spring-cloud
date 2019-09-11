@@ -5,7 +5,7 @@ pipeline {
       parallel {
         stage('java') {
           steps {
-            echo 'BUILD_NUMBER: $BUILD_NUMBER'
+            echo 'BUILD_NUMBER: ${BUILD_NUMBER}'
             echo 'JOB_NAME: $JOB_NAME'
             echo 'JOB_BASE_NAME: $JOB_BASE_NAME'
             echo 'BRANCH_NAME: $BRANCH_NAME'
@@ -42,7 +42,9 @@ pipeline {
                 sh 'ssh -i ${privateKey} ${userName}@${deployHost} mv ${deployPath}/${moduleName}-${projectVersion}.jar ${deployPath}/backup/${moduleName}-${projectVersion}.jar'
                 sh 'scp -i ${privateKey}  ${moduleName}-${projectVersion}.jar ${userName}@${deployHost}:${deployPath}'
               }
+
             }
+
           }
         }
         stage('api-gateway') {
@@ -56,7 +58,9 @@ pipeline {
               withCredentials(bindings: [sshUserPrivateKey(credentialsId: 'ffa6fc58-0558-4b74-baeb-b21dd0a035a5', keyFileVariable: 'privateKey', usernameVariable: 'userName')]) {
                 sh 'scp -i ${privateKey}  ${moduleName}-${projectVersion}.jar ${userName}@${deployHost}:${deployPath}'
               }
+
             }
+
           }
         }
         stage('config-server-git') {
@@ -70,7 +74,9 @@ pipeline {
               withCredentials(bindings: [sshUserPrivateKey(credentialsId: 'ffa6fc58-0558-4b74-baeb-b21dd0a035a5', keyFileVariable: 'privateKey', usernameVariable: 'userName')]) {
                 sh 'scp -i ${privateKey}  ${moduleName}-${projectVersion}.jar ${userName}@${deployHost}:${deployPath}'
               }
+
             }
+
           }
         }
         stage('eureka-consumer') {
@@ -84,7 +90,9 @@ pipeline {
               withCredentials(bindings: [sshUserPrivateKey(credentialsId: 'ffa6fc58-0558-4b74-baeb-b21dd0a035a5', keyFileVariable: 'privateKey', usernameVariable: 'userName')]) {
                 sh 'scp -i ${privateKey}  ${moduleName}-${projectVersion}.jar ${userName}@${deployHost}:${deployPath}'
               }
+
             }
+
           }
         }
         stage('eureka-producer') {
@@ -98,7 +106,9 @@ pipeline {
               withCredentials(bindings: [sshUserPrivateKey(credentialsId: 'ffa6fc58-0558-4b74-baeb-b21dd0a035a5', keyFileVariable: 'privateKey', usernameVariable: 'userName')]) {
                 sh 'scp -i ${privateKey}  ${moduleName}-${projectVersion}.jar ${userName}@${deployHost}:${deployPath}'
               }
+
             }
+
           }
         }
         stage('eureka-server') {
@@ -112,7 +122,9 @@ pipeline {
               withCredentials(bindings: [sshUserPrivateKey(credentialsId: 'ffa6fc58-0558-4b74-baeb-b21dd0a035a5', keyFileVariable: 'privateKey', usernameVariable: 'userName')]) {
                 sh 'scp -i ${privateKey}  ${moduleName}-${projectVersion}.jar ${userName}@${deployHost}:${deployPath}'
               }
+
             }
+
           }
         }
         stage('hystrix-dashboard') {
@@ -126,7 +138,9 @@ pipeline {
               withCredentials(bindings: [sshUserPrivateKey(credentialsId: 'ffa6fc58-0558-4b74-baeb-b21dd0a035a5', keyFileVariable: 'privateKey', usernameVariable: 'userName')]) {
                 sh 'scp -i ${privateKey}  ${moduleName}-${projectVersion}.jar ${userName}@${deployHost}:${deployPath}'
               }
+
             }
+
           }
         }
         stage('turbine') {
@@ -140,7 +154,9 @@ pipeline {
               withCredentials(bindings: [sshUserPrivateKey(credentialsId: 'ffa6fc58-0558-4b74-baeb-b21dd0a035a5', keyFileVariable: 'privateKey', usernameVariable: 'userName')]) {
                 sh 'scp -i ${privateKey}  ${moduleName}-${projectVersion}.jar ${userName}@${deployHost}:${deployPath}'
               }
+
             }
+
           }
         }
       }
@@ -150,6 +166,7 @@ pipeline {
         withCredentials(bindings: [sshUserPrivateKey(credentialsId: 'ffa6fc58-0558-4b74-baeb-b21dd0a035a5', keyFileVariable: 'privateKey', usernameVariable: 'userName')]) {
           sh 'ssh -i ${privateKey} ${userName}@${deployHost} "bash -s" < /var/lib/jenkins/script/spring-boot.sh start ${deployPath}/api-gateway-1.0.0.jar'
         }
+
       }
     }
   }
