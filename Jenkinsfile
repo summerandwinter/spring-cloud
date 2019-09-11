@@ -5,7 +5,7 @@ pipeline {
       parallel {
         stage('java') {
           steps {
-            echo 'BUILD_NUMBER: ${env.BUILD_NUMBER}'
+            echo 'BUILD_NUMBER: %BUILD_NUMBER%'
             echo 'JOB_NAME: $JOB_NAME'
             echo 'JOB_BASE_NAME: $JOB_BASE_NAME'
             echo 'BRANCH_NAME: $BRANCH_NAME'
