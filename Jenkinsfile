@@ -21,6 +21,7 @@ pipeline {
     stage('Build') {
       steps {
         sh 'mvn -DskipTests=true package'
+        archiveArtifacts artifacts: '**/target/*.jar', fingerprint: true
       }
     }
     stage('Delivery') {
