@@ -1,22 +1,11 @@
-// While you can't use Groovy's .collect or similar methods currently, you can
-// still transform a list into a set of actual build steps to be executed in
-// parallel.
 
-// Our initial list of strings we want to echo in parallel
-def stringsToEcho = ["a", "b", "c", "d"]
+def deliverStepNames = ["api-gateway-zuul", "api-gateway", "config-server-git", "eureka-consumer", "eureka-producer", "eureka-server", "hystrix-dashboard", "turbine"]
 
-// The map we'll store the parallel steps in before executing them.
-def stepsForParallel = stringsToEcho.collectEntries {
-    ["echoing ${it}" : transformIntoStep(it)]
+def deliverSteps = deliverStepNames.collectEntries {
+    ["${it}" : transformIntoDeliverStep(it)]
 }
-def envSteps = [['']]
 
-// Take the string and echo it.
-def transformIntoStep(inputString) {
-    // We need to wrap what we return in a Groovy closure, or else it's invoked
-    // when this method is called, not when we pass it to parallel.
-    // To do this, you need to wrap the code below in { }, and either return
-    // that explicitly, or use { -> } syntax.
+def transformIntoDeliverStep(inputString) {
     return {
         node {
             echo inputString
@@ -25,26 +14,29 @@ def transformIntoStep(inputString) {
 }
 
 node {
-    stage('Environment') {
-        parallel(
-          'jenkins': {
-            sh 'printenv'
-          },
-          'java': {
-            sh 'java -version'
-          }
-        )
-    }
-    stage('Build') {
-        echo 'Building....'
-    }
-    stage('Test') {
-        echo 'Testing....'
-    }
-    stage('Delivery') {
-        parallel stepsForParallel
-    }
-    stage('Deploy') {
-        echo 'Deploying....'
-    }
+  stage('Environment') {
+    parallel(
+      'jenkins': {
+        sh 'printenv'
+      },
+      'java': {
+        sh 'java -version'
+      },
+      'maven': {
+        sh 'mvn -v'
+      }
+     )
+  }
+  stage('Build') {
+    echo 'Building....'
+  }
+  stage('Test') {
+    echo 'Testing....'
+  }
+  stage('Delivery') {
+     parallel deliverSteps
+  }
+  stage('Deploy') {
+    echo 'Deploying....'
+  }
 }
