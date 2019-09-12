@@ -6,15 +6,19 @@ def deliverSteps = deliverStepNames.collectEntries {
 }
 
 def transformIntoDeliverStep(inputString) {
-    return {
-        node {
-            echo inputString
-        }
+  return {
+    node {
+      withCredentials(bindings: [sshUserPrivateKey(credentialsId: 'ffa6fc58-0558-4b74-baeb-b21dd0a035a5', keyFileVariable: 'privateKey', usernameVariable: 'userName')]) {
+        sh 'ssh -i ${privateKey} ${userName}@${deployHost} "bash -s" < ${springBootScript} stop ${deployPath}/${STAGE_NAME}-${projectVersion}.jar'
+        sh 'ssh -i ${privateKey} ${userName}@${deployHost} mv ${deployPath}/${STAGE_NAME}-${projectVersion}.jar ${deployPath}/backup/${STAGE_NAME}-${projectVersion}.jar'
+        sh 'scp -i ${privateKey}  ${WORKSPACE}/${STAGE_NAME}/target/${STAGE_NAME}-${projectVersion}.jar ${userName}@${deployHost}:${deployPath}'
+      }
     }
+  }
 }
 
 node {
-  stage('Environment') {
+  stage('Check Env') {
     parallel(
       'jenkins': {
         sh 'printenv'
@@ -28,7 +32,8 @@ node {
      )
   }
   stage('Build') {
-    echo 'Building....'
+    sh 'mvn -DskipTests=true package'
+    archiveArtifacts artifacts: '**/target/*.jar', fingerprint: true
   }
   stage('Test') {
     echo 'Testing....'
