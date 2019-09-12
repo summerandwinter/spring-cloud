@@ -9,7 +9,7 @@ def stringsToEcho = ["a", "b", "c", "d"]
 def stepsForParallel = stringsToEcho.collectEntries {
     ["echoing ${it}" : transformIntoStep(it)]
 }
-
+def envSteps = [['']]
 
 // Take the string and echo it.
 def transformIntoStep(inputString) {
@@ -25,7 +25,8 @@ def transformIntoStep(inputString) {
 }
 
 node {
-    parallel('Environment') {
+    stage('Environment') {
+        parallel('Environment') {
             stage('jenkins') {
                 sh 'printenv'
             }
@@ -38,6 +39,7 @@ node {
                 sh 'mvn -v'
             }
         }
+    }
     stage('Build') {
         echo 'Building....'
     }
