@@ -23,6 +23,12 @@ environment {
     springBootScript = '/var/lib/jenkins/script/spring-boot.sh'
   }
 node {
+environment {
+    deployPath = '/root/data'
+    deployHost = '47.244.175.138'
+    projectVersion = '1.0.0'
+    springBootScript = '/var/lib/jenkins/script/spring-boot.sh'
+  }
   stage('Check Env') {
     parallel(
       'jenkins': {
