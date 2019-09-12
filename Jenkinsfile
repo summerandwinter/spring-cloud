@@ -1,5 +1,6 @@
 
-def deliverStepNames = ["api-gateway-zuul", "api-gateway", "config-server-git", "eureka-consumer", "eureka-producer", "eureka-server", "hystrix-dashboard", "turbine"]
+// def deliverStepNames = ["api-gateway-zuul", "api-gateway", "config-server-git", "eureka-consumer", "eureka-producer", "eureka-server", "hystrix-dashboard", "turbine"]
+def deliverStepNames = ["config-server-git"]
 
 def deliverSteps = deliverStepNames.collectEntries {
     ["${it}" : transformIntoDeliverStep(it)]
