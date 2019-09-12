@@ -5,13 +5,14 @@ def deliverSteps = deliverStepNames.collectEntries {
     ["${it}" : transformIntoDeliverStep(it)]
 }
 
-def transformIntoDeliverStep(inputString) {
+def transformIntoDeliverStep(stepName) {
   return {
     node {
       withCredentials(bindings: [sshUserPrivateKey(credentialsId: 'ffa6fc58-0558-4b74-baeb-b21dd0a035a5', keyFileVariable: 'privateKey', usernameVariable: 'userName')]) {
+        sh 'printenv'
         sh 'ssh -i ${privateKey} ${userName}@${deployHost} "bash -s" < ${springBootScript} stop ${deployPath}/${STAGE_NAME}-${projectVersion}.jar'
-        sh 'ssh -i ${privateKey} ${userName}@${deployHost} mv ${deployPath}/${STAGE_NAME}-${projectVersion}.jar ${deployPath}/backup/${STAGE_NAME}-${projectVersion}.jar'
-        sh 'scp -i ${privateKey}  ${WORKSPACE}/${STAGE_NAME}/target/${STAGE_NAME}-${projectVersion}.jar ${userName}@${deployHost}:${deployPath}'
+        sh 'ssh -i ${privateKey} ${userName}@${deployHost} mv ${deployPath}/${stepName}-${projectVersion}.jar ${deployPath}/backup/${stepName}-${projectVersion}.jar'
+        sh 'scp -i ${privateKey}  ${WORKSPACE}/${stepName}/target/${stepName}-${projectVersion}.jar ${userName}@${deployHost}:${deployPath}'
       }
     }
   }
@@ -33,8 +34,9 @@ node {
        )
     }
     stage('Build') {
-      sh 'mvn -DskipTests=true package'
-      archiveArtifacts artifacts: '**/target/*.jar', fingerprint: true
+      sh 'printenv'
+      // sh 'mvn -DskipTests=true package'
+      // archiveArtifacts artifacts: '**/target/*.jar', fingerprint: true
     }
     stage('Test') {
       echo 'Testing....'
