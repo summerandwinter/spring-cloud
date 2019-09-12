@@ -10,9 +10,6 @@ def stepsForParallel = stringsToEcho.collectEntries {
     ["echoing ${it}" : transformIntoStep(it)]
 }
 
-// Actually run the steps in parallel - parallel takes a map as an argument,
-// hence the above.
-parallel stepsForParallel
 
 // Take the string and echo it.
 def transformIntoStep(inputString) {
@@ -24,5 +21,20 @@ def transformIntoStep(inputString) {
         node {
             echo inputString
         }
+    }
+}
+
+node {
+    stage('Build') {
+        echo 'Building....'
+    }
+    stage('Test') {
+        echo 'Testing....'
+    }
+    stage('Delivery') {
+      parallel stepsForParallel
+    }
+    stage('Deploy') {
+        echo 'Deploying....'
     }
 }
