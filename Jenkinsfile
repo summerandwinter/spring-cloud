@@ -35,8 +35,8 @@ node {
     }
     stage('Build') {
       sh 'printenv'
-      // sh 'mvn -DskipTests=true package'
-      // archiveArtifacts artifacts: '**/target/*.jar', fingerprint: true
+      sh 'mvn -DskipTests=true package'
+      archiveArtifacts artifacts: '**/target/*.jar', fingerprint: true
     }
     stage('Test') {
       echo 'Testing....'
@@ -45,7 +45,10 @@ node {
        parallel deliverSteps
     }
     stage('Deploy') {
-      echo 'Deploying....'
+       withCredentials(bindings: [sshUserPrivateKey(credentialsId: 'ffa6fc58-0558-4b74-baeb-b21dd0a035a5', keyFileVariable: 'PRIVATE_KEY', usernameVariable: 'USERNAME')]) {
+         echo 'Deploying....'
+         sh 'ssh -i ${PRIVATE_KEY} ${USERNAME}@${DEPLOY_HOST} "bash -s" < ${SPRING_BOOT_SCRIPT} start ${DEPLOY_PATH}/config-server-git-1.0.0.jar'
+       }
     }
   }
 }
