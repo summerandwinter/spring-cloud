@@ -26,19 +26,14 @@ def transformIntoStep(inputString) {
 
 node {
     stage('Environment') {
-        parallel('Environment') {
-            stage('jenkins') {
-                sh 'printenv'
-            }
-            stage('java') {
-                sh 'which java'
-                sh 'java -version'
-            }
-            stage('maven') {
-                sh 'which mvn'
-                sh 'mvn -v'
-            }
-        }
+        parallel(
+          'jenkins': {
+            sh 'printenv'
+          },
+          'java': {
+            sh 'java -version'
+          }
+        )
     }
     stage('Build') {
         echo 'Building....'
