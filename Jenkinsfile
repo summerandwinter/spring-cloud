@@ -8,16 +8,16 @@ def deliverSteps = deliverStepNames.collectEntries {
 def transformIntoDeliverStep(stepName) {
   return {
     stage(stepName) {
-      withCredentials(bindings: [sshUserPrivateKey(credentialsId: 'ffa6fc58-0558-4b74-baeb-b21dd0a035a5', keyFileVariable: 'privateKey', usernameVariable: 'userName')]) {
+      withCredentials(bindings: [sshUserPrivateKey(credentialsId: 'ffa6fc58-0558-4b74-baeb-b21dd0a035a5', keyFileVariable: 'PRIVATE_KEY', usernameVariable: 'USERNAME')]) {
         sh 'printenv'
-        sh 'ssh -i ${privateKey} ${userName}@${deployHost} "bash -s" < ${springBootScript} stop ${deployPath}/${STAGE_NAME}-${projectVersion}.jar'
-        sh 'ssh -i ${privateKey} ${userName}@${deployHost} mv ${deployPath}/${stepName}-${projectVersion}.jar ${deployPath}/backup/${stepName}-${projectVersion}.jar'
-        sh 'scp -i ${privateKey}  ${WORKSPACE}/${stepName}/target/${stepName}-${projectVersion}.jar ${userName}@${deployHost}:${deployPath}'
+        sh 'ssh -i ${PRIVATE_KEY} ${USERNAME}@${DEPLOY_HOST} "bash -s" < ${SPRING_BOOT_SCRIPT} stop ${DEPLOY_PATH}/${STAGE_NAME}-${PROJECT_VERSION}.jar'
+        sh 'ssh -i ${PRIVATE_KEY} ${USERNAME}@${DEPLOY_HOST} mv ${DEPLOY_PATH}/${STAGE_NAME}-${PROJECT_VERSION}.jar ${DEPLOY_PATH}/backup/${stepName}-${PROJECT_VERSION}.jar'
+        sh 'scp -i ${PRIVATE_KEY}  ${WORKSPACE}/${STAGE_NAME}/target/${STAGE_NAME}-${PROJECT_VERSION}.jar ${USERNAME}@${DEPLOY_HOST}:${DEPLOY_PATH}'
       }
     }
   }
 }
-def environment = ['deployPath=/root/data', 'deployHost=47.244.175.138',  'projectVersion=1.0.0', 'springBootScript=/var/lib/jenkins/script/spring-boot.sh']
+def environment = ['DEPLOY_PATH=/root/data', 'DEPLOY_HOST=47.244.175.138',  'PROJECT_VERSION=1.0.0', 'SPRING_BOOT_SCRIPT=/var/lib/jenkins/script/spring-boot.sh']
 node {
   withEnv(environment) {
     stage('Check Env') {
