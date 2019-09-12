@@ -36,6 +36,7 @@ node {
     }
     stage('Build') {
       sh 'printenv'
+      sh 'mvn clean'
       sh 'mvn -DskipTests=true package'
       archiveArtifacts artifacts: '**/target/*.jar', fingerprint: true
     }
