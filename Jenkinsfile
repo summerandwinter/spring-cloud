@@ -16,43 +16,34 @@ def transformIntoDeliverStep(inputString) {
     }
   }
 }
-environment {
-    deployPath = '/root/data'
-    deployHost = '47.244.175.138'
-    projectVersion = '1.0.0'
-    springBootScript = '/var/lib/jenkins/script/spring-boot.sh'
-  }
+def environment = ['deployPath=/root/data', 'deployHost=47.244.175.138',  'projectVersion=1.0.0', 'springBootScript=/var/lib/jenkins/script/spring-boot.sh']
 node {
-environment {
-    deployPath = '/root/data'
-    deployHost = '47.244.175.138'
-    projectVersion = '1.0.0'
-    springBootScript = '/var/lib/jenkins/script/spring-boot.sh'
-  }
-  stage('Check Env') {
-    parallel(
-      'jenkins': {
-        sh 'printenv'
-      },
-      'java': {
-        sh 'java -version'
-      },
-      'maven': {
-        sh 'mvn -v'
-      }
-     )
-  }
-  stage('Build') {
-    sh 'mvn -DskipTests=true package'
-    archiveArtifacts artifacts: '**/target/*.jar', fingerprint: true
-  }
-  stage('Test') {
-    echo 'Testing....'
-  }
-  stage('Delivery') {
-     parallel deliverSteps
-  }
-  stage('Deploy') {
-    echo 'Deploying....'
+  withEnv(environment) {
+    stage('Check Env') {
+      parallel(
+        'jenkins': {
+          sh 'printenv'
+        },
+        'java': {
+          sh 'java -version'
+        },
+        'maven': {
+          sh 'mvn -v'
+        }
+       )
+    }
+    stage('Build') {
+      sh 'mvn -DskipTests=true package'
+      archiveArtifacts artifacts: '**/target/*.jar', fingerprint: true
+    }
+    stage('Test') {
+      echo 'Testing....'
+    }
+    stage('Delivery') {
+       parallel deliverSteps
+    }
+    stage('Deploy') {
+      echo 'Deploying....'
+    }
   }
 }
