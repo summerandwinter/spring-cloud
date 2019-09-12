@@ -16,7 +16,12 @@ def transformIntoDeliverStep(inputString) {
     }
   }
 }
-
+environment {
+    deployPath = '/root/data'
+    deployHost = '47.244.175.138'
+    projectVersion = '1.0.0'
+    springBootScript = '/var/lib/jenkins/script/spring-boot.sh'
+  }
 node {
   stage('Check Env') {
     parallel(
