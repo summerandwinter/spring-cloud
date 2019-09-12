@@ -26,7 +26,6 @@ def transformIntoStep(inputString) {
 
 node {
     stage('Environment') {
-        echo 'Building....'
         parallel {
             stage('jenkins') {
                 sh 'printenv'
