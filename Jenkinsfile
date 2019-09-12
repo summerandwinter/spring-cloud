@@ -7,7 +7,7 @@ def deliverSteps = deliverStepNames.collectEntries {
 
 def transformIntoDeliverStep(stepName) {
   return {
-    node {
+    stage(stepName) {
       withCredentials(bindings: [sshUserPrivateKey(credentialsId: 'ffa6fc58-0558-4b74-baeb-b21dd0a035a5', keyFileVariable: 'privateKey', usernameVariable: 'userName')]) {
         sh 'printenv'
         sh 'ssh -i ${privateKey} ${userName}@${deployHost} "bash -s" < ${springBootScript} stop ${deployPath}/${STAGE_NAME}-${projectVersion}.jar'
