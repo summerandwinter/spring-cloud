@@ -20,6 +20,8 @@ def transformIntoDeliverStep(stepName) {
 }
 def environment = ['DEPLOY_PATH=/root/data', 'DEPLOY_HOST=47.244.175.138',  'PROJECT_VERSION=1.0.0', 'SPRING_BOOT_SCRIPT=/var/lib/jenkins/script/spring-boot.sh']
 node {
+  checkout scm
+  echo "current branch: $BRANCH_NAME"
   withEnv(environment) {
     stage('Check Env') {
       parallel(
