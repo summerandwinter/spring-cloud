@@ -63,10 +63,11 @@ node {
         }
         stage('Check Config Server') {
             def  healthUrl = "http://47.244.175.138:18006/actuator/health"
-            def shellStr = sh(script: "curl ${healthUrl}", returnStdout: true)
             def map = null
-            sleep(60)
+            def shellStr = null
             try {
+                sleep(120)
+                shellStr = sh(script: "curl ${healthUrl}", returnStdout: true)
                 echo "应用健康检查结果:${shellStr}"
                 map = new JsonSlurper().parseText(shellStr)
             } catch (Exception e) {
