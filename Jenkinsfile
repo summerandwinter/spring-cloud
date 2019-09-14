@@ -1,3 +1,4 @@
+import groovy.json.JsonSlurper
 
 // def deliverStepNames = ["api-gateway-zuul", "api-gateway", "config-server-git", "eureka-consumer", "eureka-producer", "eureka-server", "hystrix-dashboard", "turbine"]
 def deliverStepNames = ["config-server-git"]
@@ -41,19 +42,44 @@ node {
       sh 'printenv'
       sh 'mvn clean'
       sh 'mvn -DskipTests=true package'
-      archiveArtifacts artifacts: '**/target/*.jar', fingerprint: true
+
     }
     stage('Test') {
       echo 'Testing....'
     }
+    stage('Archive') {
+      archiveArtifacts artifacts: '**/target/*.jar', fingerprint: true
+    }
     stage('Delivery') {
        parallel deliverSteps
     }
-    stage('Deploy') {
+    stage('Run Config Server') {
        withCredentials(bindings: [sshUserPrivateKey(credentialsId: 'ffa6fc58-0558-4b74-baeb-b21dd0a035a5', keyFileVariable: 'PRIVATE_KEY', usernameVariable: 'USERNAME')]) {
          echo 'Deploying....'
          sh 'ssh -i ${PRIVATE_KEY} ${USERNAME}@${DEPLOY_HOST} "bash -s" < ${SPRING_BOOT_SCRIPT} start ${DEPLOY_PATH}/config-server-git-1.0.0.jar'
        }
+    }
+    stage('Check Config Server') {
+        def  healthUrl = "https://jenkins.47-244-175-138.sslip.io/actuator/health"
+        def shellStr = sh(script: "curl ${healthUrl}", returnStdout: true)
+        def map = null
+        try {
+          echo "应用健康检查结果:${shellStr}"
+          map = new JsonSlurper().parseText(shellStr)
+        } catch (Exception e) {
+        }
+        if (map != null && "UP" == map.get("status")) {
+          echo "应用健康运行"
+        } else {
+          Thread.sleep((long) 1000 * 60 * 1)//睡眠1分钟
+          shellStr = sh(script: "curl ${healthUrl}", returnStdout: true)
+          map = new JsonSlurper().parseText(shellStr)
+          if (map == null || "UP" != map.get("status")) {
+           throw new RuntimeException("应用不稳定，请检查服务是否正常")
+          } else {
+            echo "应用健康运行"
+          }
+        }
     }
   }
 }
