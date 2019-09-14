@@ -66,7 +66,7 @@ node {
             def map = null
             def shellStr = null
             try {
-                sleep(120)
+                sleep(60)
                 shellStr = sh(script: "curl ${healthUrl}", returnStdout: true)
                 echo "应用健康检查结果:${shellStr}"
                 map = new JsonSlurper().parseText(shellStr)
@@ -88,7 +88,11 @@ node {
             }
         }
         stage('Run Rest Service') {
-            echo configServerHealth
+            if (configServerHealth) {
+                echo 'Config service is running'
+            } else {
+                echo 'Config service has a problem'
+            }
         }
     }
 }
