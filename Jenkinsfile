@@ -23,7 +23,7 @@ def transformIntoDeliverStep(stepName) {
     return {
         stage(stepName) {
             sh 'salt -G role:slave cmd.script salt://spring-boot.sh "stop ${DEPLOY_PATH}/${STAGE_NAME}.jar"'
-            sh 'salt -G role:slave cp.get_file salt://spring-cloud/${STAGE_NAME}-${PROJECT_VERSION}.jar ${DEPLOY_HOST}/${STAGE_NAME}.jar makedirs=True'
+            sh 'salt -G role:slave cp.get_file salt://spring-cloud/${STAGE_NAME}-${PROJECT_VERSION}.jar ${DEPLOY_PATH}/${STAGE_NAME}.jar makedirs=True'
         }
     }
 }
