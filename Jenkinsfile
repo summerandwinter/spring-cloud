@@ -1,9 +1,13 @@
 import groovy.json.JsonSlurper
 
+def environment = ['DEPLOY_PATH=/data/spring-cloud', 'DEPLOY_HOST=47.244.175.138',  'PROJECT_VERSION=1.0.0', 'SPRING_BOOT_SCRIPT=/var/lib/jenkins/script/spring-boot.sh']
+
 def deliverStepNames = ["api-gateway-zuul", "api-gateway", "config-server-git", "eureka-consumer", "eureka-producer", "eureka-server", "hystrix-dashboard", "turbine"]
-def deployStepNames = ["api-gateway-zuul", "api-gateway", "eureka-consumer", "eureka-producer", "eureka-server", "hystrix-dashboard", "turbine"]
+// def deployStepNames = ["api-gateway-zuul", "api-gateway", "eureka-consumer", "eureka-producer", "eureka-server", "hystrix-dashboard", "turbine"]
 
 // def deliverStepNames = ["config-server-git"]
+def deployStepNames = ["eureka-producer", "eureka-server"]
+
 
 def configServerHealth = false
 
@@ -18,24 +22,18 @@ def deploySteps = deployStepNames.collectEntries {
 def transformIntoDeliverStep(stepName) {
     return {
         stage(stepName) {
-            withCredentials(bindings: [sshUserPrivateKey(credentialsId: 'ffa6fc58-0558-4b74-baeb-b21dd0a035a5', keyFileVariable: 'PRIVATE_KEY', usernameVariable: 'USERNAME')]) {
-                sh 'ssh -i ${PRIVATE_KEY} ${USERNAME}@${DEPLOY_HOST} "bash -s" < ${SPRING_BOOT_SCRIPT} stop ${DEPLOY_PATH}/${STAGE_NAME}-${PROJECT_VERSION}.jar'
-                // sh 'ssh -i ${PRIVATE_KEY} ${USERNAME}@${DEPLOY_HOST} mv ${DEPLOY_PATH}/${STAGE_NAME}-${PROJECT_VERSION}.jar ${DEPLOY_PATH}/backup/${stepName}-${PROJECT_VERSION}.jar'
-                sh 'scp -i ${PRIVATE_KEY}  ${WORKSPACE}/${STAGE_NAME}/target/${STAGE_NAME}-${PROJECT_VERSION}.jar ${USERNAME}@${DEPLOY_HOST}:${DEPLOY_PATH}'
-            }
+            sh 'salt -G role:slave cmd.script salt://spring-boot.sh stop ${DEPLOY_PATH}/${STAGE_NAME}.jar'
+            sh 'salt -G role:slave cp.get_file salt://spring-cloud/${STAGE_NAME}-${PROJECT_VERSION}.jar ${DEPLOY_HOST}/${STAGE_NAME}.jar makedirs=True'
         }
     }
 }
 def transformIntoDeployStep(stepName) {
     return {
         stage(stepName) {
-            withCredentials(bindings: [sshUserPrivateKey(credentialsId: 'ffa6fc58-0558-4b74-baeb-b21dd0a035a5', keyFileVariable: 'PRIVATE_KEY', usernameVariable: 'USERNAME')]) {
-                sh 'ssh -i ${PRIVATE_KEY} ${USERNAME}@${DEPLOY_HOST} "bash -s" < ${SPRING_BOOT_SCRIPT} start ${DEPLOY_PATH}/${STAGE_NAME}-${PROJECT_VERSION}.jar'
-            }
+            sh 'salt -G role:slave cmd.script salt://spring-boot.sh start ${DEPLOY_PATH}/${STAGE_NAME}.jar'
         }
     }
 }
-def environment = ['DEPLOY_PATH=/root/data', 'DEPLOY_HOST=47.244.175.138',  'PROJECT_VERSION=1.0.0', 'SPRING_BOOT_SCRIPT=/var/lib/jenkins/script/spring-boot.sh']
 node {
 
     withEnv(environment) {
@@ -64,6 +62,9 @@ node {
             echo 'Testing....'
         }
         stage('归档') {
+            echo '拷贝文件到 salt 文件服务目录'
+            sh 'cp ${WORKSPACE}/**/target/**.jar /srv/salt/'
+            echo '归档文件'
             archiveArtifacts artifacts: '**/target/*.jar', fingerprint: true
         }
         stage('传输') {
