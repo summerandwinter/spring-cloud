@@ -73,11 +73,11 @@ node {
         stage('启动配置中心') {
             withCredentials(bindings: [sshUserPrivateKey(credentialsId: 'ffa6fc58-0558-4b74-baeb-b21dd0a035a5', keyFileVariable: 'PRIVATE_KEY', usernameVariable: 'USERNAME')]) {
                 echo 'Deploying....'
-                sh 'ssh -i ${PRIVATE_KEY} ${USERNAME}@${DEPLOY_HOST} "bash -s" < ${SPRING_BOOT_SCRIPT} start ${DEPLOY_PATH}/config-server-git-1.0.0.jar'
+                sh 'salt -G role:slave cmd.script salt://spring-boot.sh start ${DEPLOY_PATH}/${STAGE_NAME}.jar'
             }
         }
         stage('检查配置中心') {
-            def  healthUrl = "http://47.244.175.138:18006/actuator/health"
+            def  healthUrl = "http://115.159.195.167:18006/actuator/health"
             def map = null
             def shellStr = null
             try {
