@@ -31,7 +31,7 @@ def transformIntoDeliverStep(stepName) {
 def transformIntoDeployStep(stepName) {
     return {
         stage(stepName) {
-            sh 'salt -G role:slave cmd.script salt://spring-boot.sh "start ${DEPLOY_PATH}/${STAGE_NAME}.jar"'
+            sh 'salt -G role:slave cmd.script salt://spring-boot.sh "start ${DEPLOY_PATH}/${STAGE_NAME}.jar --spring.profiles.active=prod"'
         }
     }
 }
@@ -74,13 +74,13 @@ node {
         stage('启动服务发现') {
             parallel(
                     '0_4': {
-                        sh 'salt -G "VM_0_4_centos" cmd.script salt://spring-boot.sh "start ${DEPLOY_PATH}/eureka-server.jar --spring.profiles.active=node01"'
+                        sh 'salt "VM_0_4_centos" cmd.script salt://spring-boot.sh "start ${DEPLOY_PATH}/eureka-server.jar --spring.profiles.active=node01"'
                     },
                     '0_30': {
-                        sh 'salt -G "VM_0_30_centos"  cmd.script salt://spring-boot.sh "start ${DEPLOY_PATH}/eureka-server.jar --spring.profiles.active=node03"'
+                        sh 'salt "VM_0_30_centos"  cmd.script salt://spring-boot.sh "start ${DEPLOY_PATH}/eureka-server.jar --spring.profiles.active=node03"'
                     },
                     '0_103': {
-                        sh 'salt -G "VM_0_103_centos"  cmd.script salt://spring-boot.sh "start ${DEPLOY_PATH}/eureka-server.jar --spring.profiles.active=node03"'
+                        sh 'salt "VM_0_103_centos"  cmd.script salt://spring-boot.sh "start ${DEPLOY_PATH}/eureka-server.jar --spring.profiles.active=node03"'
                     }
             )
 
