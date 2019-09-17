@@ -24,6 +24,7 @@ def transformIntoDeliverStep(stepName) {
     return {
         stage(stepName) {
             sh 'salt -G role:slave cmd.script salt://spring-boot.sh "stop ${DEPLOY_PATH}/${STAGE_NAME}.jar"'
+            sh 'salt -G role:slave cmd.run "\\mv ${DEPLOY_PATH}/${STAGE_NAME}.jar ${DEPLOY_PATH}/backup/${STAGE_NAME}.jar"'
             sh 'salt -G role:slave cp.get_file salt://spring-cloud/${STAGE_NAME}-${PROJECT_VERSION}.jar ${DEPLOY_PATH}/${STAGE_NAME}.jar makedirs=True'
         }
     }
@@ -64,7 +65,7 @@ node {
         }
         stage('归档') {
             echo '拷贝文件到 salt 文件服务目录'
-            sh 'cp ${WORKSPACE}/**/target/**.jar /srv/salt/'
+            sh '\\cp ${WORKSPACE}/**/target/**.jar /srv/salt/'
             echo '归档文件'
             archiveArtifacts artifacts: '**/target/*.jar', fingerprint: true
         }
