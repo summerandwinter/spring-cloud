@@ -90,7 +90,7 @@ node {
             def map = null
             def shellStr = null
             try {
-                sleep(60)
+                sleep(10)
                 shellStr = sh(script: "curl ${healthUrl}", returnStdout: true)
                 echo "应用健康检查结果:${shellStr}"
                 map = new JsonSlurper().parseText(shellStr)
@@ -100,7 +100,7 @@ node {
                 echo "应用健康运行"
                 eurekaServerHealth = true
             } else {
-                sleep(60)//睡眠1分钟
+                sleep(10)
                 shellStr = sh(script: "curl ${healthUrl}", returnStdout: true)
                 map = new JsonSlurper().parseText(shellStr)
                 if (map == null || "UP" != map.get("status")) {
@@ -126,7 +126,7 @@ node {
             def map = null
             def shellStr = null
             try {
-                sleep(60)
+                sleep(10)
                 shellStr = sh(script: "curl ${healthUrl}", returnStdout: true)
                 echo "应用健康检查结果:${shellStr}"
                 map = new JsonSlurper().parseText(shellStr)
@@ -136,7 +136,7 @@ node {
                 echo "应用健康运行"
                 configServerHealth = true
             } else {
-                sleep(60)//睡眠1分钟
+                sleep(10)//睡眠1分钟
                 shellStr = sh(script: "curl ${healthUrl}", returnStdout: true)
                 map = new JsonSlurper().parseText(shellStr)
                 if (map == null || "UP" != map.get("status")) {
