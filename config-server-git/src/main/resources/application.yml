@@ -10,8 +10,6 @@ spring:
       enabled: true
       trace:
         enabled: true
-  rabbitmq:
-    host: 172.12.0.12
 server:
   port: 18006
 eureka:
