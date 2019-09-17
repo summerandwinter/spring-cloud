@@ -1,0 +1,25 @@
+server:
+  port: 18003
+spring:
+  application:
+    name: eureka-consumer
+  sleuth:
+    web:
+      client:
+        enabled: true
+    sampler:
+      probability: 1.0
+  zipkin:
+    base-url: http://172.17.0.12:19411/
+eureka:
+  client:
+    service-url:
+      defaultZone: http://172.17.0.4:18000/eureka,http://172.17.0.30:18000/eureka,http://172.17.0.103:18000/eureka
+feign:
+  hystrix:
+    enabled: true
+management:
+  endpoints:
+    web:
+      exposure:
+        include: hystrix.stream

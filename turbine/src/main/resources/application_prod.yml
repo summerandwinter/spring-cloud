@@ -1,0 +1,13 @@
+spring:
+  application:
+    name: turbine
+server:
+  port: 18005
+eureka:
+  client:
+    service-url:
+      defaultZone: http://172.17.0.4:18000/eureka,http://172.17.0.30:18000/eureka,http://172.17.0.103:18000/eureka
+turbine:
+  app-config: eureka-consumer
+  cluster-name-expression: new String("default")
+  combine-host-port: true
