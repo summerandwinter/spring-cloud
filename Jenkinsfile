@@ -32,7 +32,7 @@ def transformIntoDeliverStep(stepName) {
 def transformIntoDeployStep(stepName) {
     return {
         stage(stepName) {
-            sh 'salt -G role:slave cmd.script salt://spring-boot.sh "start \'${DEPLOY_PATH}/${STAGE_NAME}.jar --spring.profiles.active=prod\'"'
+            sh 'salt -G role:slave cmd.script salt://spring-boot.sh "start ${DEPLOY_PATH}/${STAGE_NAME}.jar --spring.profiles.active=prod"'
         }
     }
 }
@@ -75,13 +75,13 @@ node {
         stage('启动服务发现') {
             parallel(
                     '0_4': {
-                        sh 'salt "VM_0_4_centos" cmd.script salt://spring-boot.sh "start \'${DEPLOY_PATH}/eureka-server.jar --spring.profiles.active=node01\'"'
+                        sh 'salt "VM_0_4_centos" cmd.script salt://spring-boot.sh "start ${DEPLOY_PATH}/eureka-server.jar --spring.profiles.active=node01"'
                     },
                     '0_30': {
-                        sh 'salt "VM_0_30_centos"  cmd.script salt://spring-boot.sh "start \'${DEPLOY_PATH}/eureka-server.jar --spring.profiles.active=node03\'"'
+                        sh 'salt "VM_0_30_centos"  cmd.script salt://spring-boot.sh "start ${DEPLOY_PATH}/eureka-server.jar --spring.profiles.active=node03"'
                     },
                     '0_103': {
-                        sh 'salt "VM_0_103_centos"  cmd.script salt://spring-boot.sh "start \'${DEPLOY_PATH}/eureka-server.jar --spring.profiles.active=node03\'"'
+                        sh 'salt "VM_0_103_centos"  cmd.script salt://spring-boot.sh "start ${DEPLOY_PATH}/eureka-server.jar --spring.profiles.active=node03"'
                     }
             )
 
@@ -114,7 +114,7 @@ node {
         }
         stage('启动配置中心') {
             if (eurekaServerHealth) {
-                sh 'salt -G role:slave cmd.script salt://spring-boot.sh "start \'${DEPLOY_PATH}/config-server-git.jar --spring.profiles.active=prod\'"'
+                sh 'salt -G role:slave cmd.script salt://spring-boot.sh "start ${DEPLOY_PATH}/config-server-git.jar --spring.profiles.active=prod"'
             } else {
                 echo '服务发现集群启动失败'
                 throw new RuntimeException("应用不稳定，请检查服务是否正常")
