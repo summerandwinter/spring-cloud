@@ -6,10 +6,11 @@ def deliverStepNames = ["api-gateway-zuul", "api-gateway", "config-server-git", 
 // def deployStepNames = ["api-gateway-zuul", "api-gateway", "eureka-consumer", "eureka-producer", "eureka-server", "hystrix-dashboard", "turbine"]
 
 // def deliverStepNames = ["config-server-git"]
-def deployStepNames = ["eureka-producer", "eureka-server"]
+def deployStepNames = ["api-gateway",  "eureka-consumer", "eureka-producer"]
 
 
 def configServerHealth = false
+def eurekaServerHealth = false
 
 def deliverSteps = deliverStepNames.collectEntries {
     ["${it}" : transformIntoDeliverStep(it)]
@@ -70,12 +71,56 @@ node {
         stage('传输') {
             parallel deliverSteps
         }
-        stage('启动配置中心') {
-            withCredentials(bindings: [sshUserPrivateKey(credentialsId: 'ffa6fc58-0558-4b74-baeb-b21dd0a035a5', keyFileVariable: 'PRIVATE_KEY', usernameVariable: 'USERNAME')]) {
-                echo 'Deploying....'
-                sh 'salt -G role:slave cmd.script salt://spring-boot.sh "start ${DEPLOY_PATH}/config-server-git.jar"'
+        stage('启动服务发现') {
+            parallel(
+                    '0_4': {
+                        sh 'salt -G "VM_0_4_centos" cmd.script salt://spring-boot.sh "start ${DEPLOY_PATH}/eureka-server.jar --spring.profiles.active=node01"'
+                    },
+                    '0_30': {
+                        sh 'salt -G "VM_0_30_centos"  cmd.script salt://spring-boot.sh "start ${DEPLOY_PATH}/eureka-server.jar --spring.profiles.active=node03"'
+                    },
+                    '0_103': {
+                        sh 'salt -G "VM_0_103_centos"  cmd.script salt://spring-boot.sh "start ${DEPLOY_PATH}/eureka-server.jar --spring.profiles.active=node03"'
+                    }
+            )
+
+        }
+        stage('检查服务发现') {
+            def  healthUrl = "http://115.159.195.167:18000/actuator/health"
+            def map = null
+            def shellStr = null
+            try {
+                sleep(60)
+                shellStr = sh(script: "curl ${healthUrl}", returnStdout: true)
+                echo "应用健康检查结果:${shellStr}"
+                map = new JsonSlurper().parseText(shellStr)
+            } catch (Exception e) {
+            }
+            if (map != null && "UP" == map.get("status")) {
+                echo "应用健康运行"
+                eurekaServerHealth = true
+            } else {
+                sleep(60)//睡眠1分钟
+                shellStr = sh(script: "curl ${healthUrl}", returnStdout: true)
+                map = new JsonSlurper().parseText(shellStr)
+                if (map == null || "UP" != map.get("status")) {
+                    throw new RuntimeException("应用不稳定，请检查服务是否正常")
+                } else {
+                    echo "应用健康运行"
+                    eurekaServerHealth = true
+                }
             }
         }
+        stage('启动配置中心') {
+            if (eurekaServerHealth) {
+                sh 'salt -G role:slave cmd.script salt://spring-boot.sh "start ${DEPLOY_PATH}/config-server-git.jar"'
+            } else {
+                echo '服务发现集群启动失败'
+                throw new RuntimeException("应用不稳定，请检查服务是否正常")
+            }
+
+        }
+
         stage('检查配置中心') {
             def  healthUrl = "http://115.159.195.167:18006/actuator/health"
             def map = null
