@@ -31,7 +31,7 @@ def transformIntoDeliverStep(stepName) {
 def transformIntoDeployStep(stepName) {
     return {
         stage(stepName) {
-            sh 'salt -G role:slave cmd.script salt://spring-boot.sh "start ${DEPLOY_PATH}/${STAGE_NAME}.jar"'
+            sh 'salt -G role:slave cmd.script salt://spring-boot.sh "start ${DEPLOY_PATH}/${STAGE_NAME}.jar --spring.profiles.active=prod"'
         }
     }
 }
