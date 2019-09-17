@@ -1,26 +1,3 @@
 spring:
-  application:
-    name: api-gateway
-  cloud:
-    gateway:
-      discovery:
-        locator:
-          enabled: true
-      routes:
-        - id: eureka-consumer
-          uri: lb://eureka-consumer
-          order: 0
-          predicates:
-            - Path=/consumer/**
-          filters:
-            - StripPrefix=1
-            - AddResponseHeader=X-Response-Default-Foo, Default-Bar
-eureka:
-  client:
-    service-url:
-      defaultZone: http://localhost:18000/eureka
-server:
-  port: 18008
-logging:
-  level:
-    org.springframework.cloud.gateway: debug
+  profiles:
+    active:  @profileActive@

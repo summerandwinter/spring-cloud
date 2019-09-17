@@ -56,8 +56,7 @@ node {
         }
         stage('构建') {
             sh 'printenv'
-            sh 'mvn clean'
-            sh 'mvn -DskipTests=true package'
+            sh 'mvn clean package -DskipTests=true -Pprod'
 
         }
         stage('测试') {
@@ -78,7 +77,7 @@ node {
                         sh 'salt "VM_0_4_centos" cmd.script salt://spring-boot.sh "start ${DEPLOY_PATH}/eureka-server.jar --spring.profiles.active=node01"'
                     },
                     '0_30': {
-                        sh 'salt "VM_0_30_centos"  cmd.script salt://spring-boot.sh "start ${DEPLOY_PATH}/eureka-server.jar --spring.profiles.active=node03"'
+                        sh 'salt "VM_0_30_centos"  cmd.script salt://spring-boot.sh "start ${DEPLOY_PATH}/eureka-server.jar --spring.profiles.active=node02"'
                     },
                     '0_103': {
                         sh 'salt "VM_0_103_centos"  cmd.script salt://spring-boot.sh "start ${DEPLOY_PATH}/eureka-server.jar --spring.profiles.active=node03"'

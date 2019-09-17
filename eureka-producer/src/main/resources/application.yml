@@ -1,27 +1,3 @@
-server:
-  port: 18002
 spring:
-  application:
-    name: eureka-producer
-  cloud:
-    bus:
-      enabled: true
-      trace:
-        enabled: true
-  sleuth:
-    web:
-      client:
-        enabled: true
-    sampler:
-      probability: 1.0
-  zipkin:
-    base-url: http://localhost:19411/
-eureka:
-  client:
-    service-url:
-     defaultZone: http://localhost:18000/eureka/
-management:
-  endpoints:
-    web:
-      exposure:
-        include: bus-refresh
+  profiles:
+    active:  @profileActive@
