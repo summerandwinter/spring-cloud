@@ -65,7 +65,7 @@ node {
         }
         stage('归档') {
             echo '拷贝文件到 salt 文件服务目录'
-            sh '\\cp ${WORKSPACE}/**/target/**.jar /srv/salt/'
+            sh '\\cp ${WORKSPACE}/**/target/**.jar /srv/salt/spring-cloud/'
             echo '归档文件'
             archiveArtifacts artifacts: '**/target/*.jar', fingerprint: true
         }
