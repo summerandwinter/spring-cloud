@@ -11,6 +11,8 @@ spring:
       probability: 1.0
   zipkin:
     base-url: http://172.17.0.12:19411/
+  rabbitmq:
+    host: 127.17.0.12
 eureka:
   client:
     service-url:
