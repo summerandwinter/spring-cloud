@@ -83,12 +83,12 @@
       <resource>
         <directory>src/main/resources</directory>
         <filtering>true</filtering>
-        <includes>
+        <!--<includes>
           <include>application.yml</include>
           <include>bootstrap.yml</include>
           <include>bootstrap-${profileActive}.yml</include>
           <include>application-${profileActive}.yml</include>
-        </includes>
+        </includes>-->
       </resource>
     </resources>
   </build>
