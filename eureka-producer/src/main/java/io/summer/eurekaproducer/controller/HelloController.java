@@ -1,5 +1,7 @@
 package io.summer.eurekaproducer.controller;
 
+import io.summer.eurekaproducer.util.DeviceUtil;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,10 +21,15 @@ public class HelloController {
   @Value("${server.port}")
   private Integer port;
   @Value("${summer.hello}")
-  private String active;
+  private String hello;
   @GetMapping("")
   public String hello(@RequestParam String name) {
-    return "Hello " + name + ", I'm from port " + port + ", active " + active;
+    List<String> ips = DeviceUtil.getLocalAddress();
+    String ip = "unknown";
+    if (ips.size() > 0) {
+      ip = ips.get(0);
+    }
+    return "Hello " + name + ", I'm from " + ip + ", here is the greeting from github " + hello;
   }
 
 }
