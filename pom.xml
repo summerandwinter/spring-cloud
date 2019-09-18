@@ -3,12 +3,6 @@
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  <parent>
-    <groupId>org.springframework.boot</groupId>
-    <artifactId>spring-boot-starter-parent</artifactId>
-    <version>2.1.6.RELEASE</version>
-    <relativePath/> <!-- lookup parent from repository -->
-  </parent>
   <groupId>io.summer</groupId>
   <artifactId>spring-cloud</artifactId>
   <version>1.0.0</version>
@@ -19,6 +13,7 @@
   <properties>
     <java.version>1.8</java.version>
     <spring-cloud.version>Greenwich.SR2</spring-cloud.version>
+    <spring.boot.admin.version>2.1.6</spring.boot.admin.version>
   </properties>
 
   <modules>
@@ -30,17 +25,36 @@
     <module>config-server-git</module>
     <module>api-gateway-zuul</module>
     <module>api-gateway</module>
+    <module>admin-server</module>
   </modules>
 
 
   <dependencyManagement>
     <dependencies>
       <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-dependencies</artifactId>
+        <version>2.1.6.RELEASE</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+
+      <dependency>
         <groupId>org.springframework.cloud</groupId>
         <artifactId>spring-cloud-dependencies</artifactId>
         <version>${spring-cloud.version}</version>
         <type>pom</type>
         <scope>import</scope>
+      </dependency>
+      <dependency>
+        <groupId>de.codecentric</groupId>
+        <artifactId>spring-boot-admin-starter-server</artifactId>
+        <version>${spring.boot.admin.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>de.codecentric</groupId>
+        <artifactId>spring-boot-admin-starter-client</artifactId>
+        <version>${spring.boot.admin.version}</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
@@ -50,6 +64,19 @@
       <plugin>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-maven-plugin</artifactId>
+        <!-- 项目重新启动 -->
+        <configuration>
+          <fork>true</fork>
+          <includeSystemScope>true</includeSystemScope>
+        </configuration>
+        <!-- 解决java找不到主类的问题 -->
+        <executions>
+          <execution>
+            <goals>
+              <goal>repackage</goal>
+            </goals>
+          </execution>
+        </executions>
       </plugin>
     </plugins>
     <resources>
@@ -58,6 +85,8 @@
         <filtering>true</filtering>
         <includes>
           <include>application.yml</include>
+          <include>bootstrap.yml</include>
+          <include>bootstrap-${profileActive}.yml</include>
           <include>application-${profileActive}.yml</include>
         </includes>
       </resource>

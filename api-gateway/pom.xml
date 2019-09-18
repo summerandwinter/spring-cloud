@@ -4,12 +4,10 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
-    <groupId>org.springframework.boot</groupId>
-    <artifactId>spring-boot-starter-parent</artifactId>
-    <version>2.1.6.RELEASE</version>
-    <relativePath/> <!-- lookup parent from repository -->
+    <artifactId>spring-cloud</artifactId>
+    <groupId>io.summer</groupId>
+    <version>1.0.0</version>
   </parent>
-  <groupId>io.summer</groupId>
   <artifactId>api-gateway</artifactId>
   <version>1.0.0</version>
   <name>api-gateway</name>
@@ -33,25 +31,16 @@
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-actuator</artifactId>
     </dependency>
-
+    <dependency>
+      <groupId>de.codecentric</groupId>
+      <artifactId>spring-boot-admin-starter-client</artifactId>
+    </dependency>
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-test</artifactId>
       <scope>test</scope>
     </dependency>
   </dependencies>
-
-  <dependencyManagement>
-    <dependencies>
-      <dependency>
-        <groupId>org.springframework.cloud</groupId>
-        <artifactId>spring-cloud-dependencies</artifactId>
-        <version>${spring-cloud.version}</version>
-        <type>pom</type>
-        <scope>import</scope>
-      </dependency>
-    </dependencies>
-  </dependencyManagement>
 
   <build>
     <plugins>
@@ -66,6 +55,8 @@
         <filtering>true</filtering>
         <includes>
           <include>application.yml</include>
+          <include>bootstrap.yml</include>
+          <include>bootstrap-${profileActive}.yml</include>
           <include>application-${profileActive}.yml</include>
         </includes>
       </resource>

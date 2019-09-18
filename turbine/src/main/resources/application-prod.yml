@@ -11,3 +11,11 @@ turbine:
   app-config: eureka-consumer
   cluster-name-expression: new String("default")
   combine-host-port: true
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+  endpoint:
+    health:
+      show-details: always

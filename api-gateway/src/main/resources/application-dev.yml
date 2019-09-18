@@ -24,3 +24,11 @@ server:
 logging:
   level:
     org.springframework.cloud.gateway: debug
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+  endpoint:
+    health:
+      show-details: always
