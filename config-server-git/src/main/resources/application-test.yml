@@ -11,7 +11,7 @@ spring:
       trace:
         enabled: true
   rabbitmq:
-    host: 127.17.0.12
+    host: 172.17.0.12
     username: admin
     password: admin
     port: 5672
