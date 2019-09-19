@@ -14,6 +14,7 @@
     <java.version>1.8</java.version>
     <spring-cloud.version>Greenwich.SR2</spring-cloud.version>
     <spring.boot.admin.version>2.1.6</spring.boot.admin.version>
+    <lombok.version>1.18.10</lombok.version>
   </properties>
 
   <modules>
@@ -55,6 +56,11 @@
         <groupId>de.codecentric</groupId>
         <artifactId>spring-boot-admin-starter-client</artifactId>
         <version>${spring.boot.admin.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.projectlombok</groupId>
+        <artifactId>lombok</artifactId>
+        <version>${lombok.version}</version>
       </dependency>
     </dependencies>
   </dependencyManagement>

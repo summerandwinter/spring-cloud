@@ -2,6 +2,7 @@ package io.summer.eurekaproducer.controller;
 
 import io.summer.eurekaproducer.util.DeviceUtil;
 import java.util.List;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @RefreshScope
+@Slf4j
 @RequestMapping("/hello")
 public class HelloController {
 
@@ -29,6 +31,7 @@ public class HelloController {
     if (ips.size() > 0) {
       ip = ips.get(0);
     }
+    log.info("Hello {}, I'm from {}, here is the greeting from github >> {}", name, ip, hello);
     return "Hello " + name + ", I'm from " + ip + ", here is the greeting from github " + hello;
   }
 
