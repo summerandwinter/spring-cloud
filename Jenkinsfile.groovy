@@ -75,13 +75,13 @@ node {
         stage('启动服务发现') {
             parallel(
                     '0_4': {
-                        sh 'salt "VM_0_4_centos" cmd.script salt://start.sh "${DEPLOY_PATH} eureka-server --spring.profiles.active=node01 \'-javaagent:${DEPLOY_PATH}/apm-agent.jar -Delastic.apm.service_name=eureka-server\' "'
+                        sh 'salt "VM_0_4_centos" cmd.script salt://start.sh "${DEPLOY_PATH} eureka-server --spring.profiles.active=node01 "'
                     },
                     '0_30': {
-                        sh 'salt "VM_0_30_centos"  cmd.script salt://start.sh "${DEPLOY_PATH} eureka-server --spring.profiles.active=node02 \'-javaagent:${DEPLOY_PATH}/apm-agent.jar -Delastic.apm.service_name=eureka-server\' "'
+                        sh 'salt "VM_0_30_centos"  cmd.script salt://start.sh "${DEPLOY_PATH} eureka-server --spring.profiles.active=node02 "'
                     },
                     '0_103': {
-                        sh 'salt "VM_0_103_centos"  cmd.script salt://start.sh "${DEPLOY_PATH} eureka-server --spring.profiles.active=node03 \'-javaagent:${DEPLOY_PATH}/apm-agent.jar -Delastic.apm.service_name=eureka-server\' "'
+                        sh 'salt "VM_0_103_centos"  cmd.script salt://start.sh "${DEPLOY_PATH} eureka-server --spring.profiles.active=node03 "'
                     }
             )
 
