@@ -1,6 +1,6 @@
 import groovy.json.JsonSlurper
 
-def environment = ['DEPLOY_PATH=/data/spring-cloud', 'DEPLOY_HOST=47.244.175.138',  'PROJECT_VERSION=1.0.0', 'SPRING_BOOT_SCRIPT=/var/lib/jenkins/script/spring-boot.sh']
+def environment = ['DEPLOY_PATH=/data/spring-cloud', 'DEPLOY_HOST=47.244.175.138',  'PROJECT_VERSION=1.0.0', 'SPRING_BOOT_SCRIPT=/var/lib/jenkins/script/spring-boot.sh', "APM_SERVER_URL=http://localhost:8200"]
 
 def deliverStepNames = ["api-gateway-zuul", "api-gateway", "config-server-git", "eureka-consumer", "eureka-producer", "eureka-server", "hystrix-dashboard", "turbine", "admin-server"]
 // def deployStepNames = ["api-gateway-zuul", "api-gateway", "eureka-consumer", "eureka-producer", "eureka-server", "hystrix-dashboard", "turbine"]
@@ -66,6 +66,7 @@ node {
         }
         stage('归档') {
             sh '\\cp ${WORKSPACE}/**/target/**.jar /srv/salt/spring-cloud/'
+            sh 'salt -G role:slave cp.get_file salt://spring-cloud/apm-agent.jar ${DEPLOY_PATH}/apm-agent.jar makedirs=True'
             archiveArtifacts artifacts: '**/target/*.jar', fingerprint: true
         }
         stage('传输') {
@@ -74,13 +75,13 @@ node {
         stage('启动服务发现') {
             parallel(
                     '0_4': {
-                        sh 'salt "VM_0_4_centos" cmd.script salt://spring-boot.sh "start ${DEPLOY_PATH}/eureka-server.jar --spring.profiles.active=node01"'
+                        sh 'salt "VM_0_4_centos" cmd.script salt://spring-boot.sh "start ${DEPLOY_PATH}/eureka-server.jar --spring.profiles.active=node01 \'-javaagent:${DEPLOY_PATH}/apm-agent.jar -Delastic.apm.service_name=eureka-server\' "'
                     },
                     '0_30': {
-                        sh 'salt "VM_0_30_centos"  cmd.script salt://spring-boot.sh "start ${DEPLOY_PATH}/eureka-server.jar --spring.profiles.active=node02"'
+                        sh 'salt "VM_0_30_centos"  cmd.script salt://spring-boot.sh "start ${DEPLOY_PATH}/eureka-server.jar --spring.profiles.active=node02 \'-javaagent:${DEPLOY_PATH}/apm-agent.jar -Delastic.apm.service_name=eureka-server\' "'
                     },
                     '0_103': {
-                        sh 'salt "VM_0_103_centos"  cmd.script salt://spring-boot.sh "start ${DEPLOY_PATH}/eureka-server.jar --spring.profiles.active=node03"'
+                        sh 'salt "VM_0_103_centos"  cmd.script salt://spring-boot.sh "start ${DEPLOY_PATH}/eureka-server.jar --spring.profiles.active=node03 \'-javaagent:${DEPLOY_PATH}/apm-agent.jar -Delastic.apm.service_name=eureka-server\' "'
                     }
             )
 
