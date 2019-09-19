@@ -24,6 +24,7 @@ public class DeviceUtil {
           ip = (InetAddress) ips.nextElement();
          if(ip.isSiteLocalAddress()) {
            ipList.add(ip.getHostAddress());
+           System.out.println(ip.getHostAddress());
          }
         }
       }
@@ -31,6 +32,9 @@ public class DeviceUtil {
       e.printStackTrace();
     }
     return ipList;
+  }
+  public static void main(String[] args) {
+    getLocalAddress();
   }
 
 }
