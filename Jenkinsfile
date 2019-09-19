@@ -66,7 +66,7 @@ node {
         }
         stage('归档') {
             sh '\\cp ${WORKSPACE}/**/target/**.jar /srv/salt/spring-cloud/'
-            sh 'salt -G role:slave cp.get_file salt://spring-cloud/apm-agent.jar ${DEPLOY_PATH}/apm-agent.jar makedirs=True'
+            sh 'salt -G role:slave cp.get_file salt://apm-agent.jar ${DEPLOY_PATH}/apm-agent.jar makedirs=True'
             archiveArtifacts artifacts: '**/target/*.jar', fingerprint: true
         }
         stage('传输') {
