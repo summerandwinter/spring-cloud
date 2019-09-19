@@ -23,7 +23,7 @@ def deploySteps = deployStepNames.collectEntries {
 def transformIntoDeliverStep(stepName) {
     return {
         stage(stepName) {
-            sh 'salt -G role:slave cmd.script salt://spring-boot.sh "stop ${DEPLOY_PATH}/${STAGE_NAME}.jar"'
+            sh 'salt -G role:slave cmd.script salt://stop.sh "${STAGE_NAME}"'
             sh 'salt -G role:slave cmd.script salt://backup.sh "${DEPLOY_PATH} ${STAGE_NAME}.jar"'
             sh 'salt -G role:slave cp.get_file salt://spring-cloud/${STAGE_NAME}-${PROJECT_VERSION}.jar ${DEPLOY_PATH}/${STAGE_NAME}.jar makedirs=True'
         }
